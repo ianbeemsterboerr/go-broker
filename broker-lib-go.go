@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/streadway/amqp"
 )
@@ -53,6 +54,11 @@ func (v *rabbitConnectionBuilder) Connect() (*amqp.Connection, error) {
 	tries := 0
 	for tries < v.allowedRetries && err != nil {
 		conn, err = amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s", v.user, v.password, v.address))
+		if err != nil {
+			fmt.Println(err)
+			time.Sleep(time.Second * 1)
+			tries++
+		}
 	}
 	return conn, err
 }
