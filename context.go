@@ -53,11 +53,6 @@ func (broker *BrokerContext) AddMessageListener(queueName string, onMessageRecei
 			onMessageReceive(d.Body)
 		}
 	}()
-
-	forever := make(chan bool)
-
-	log.Printf("Started listening on exchange %s on queue %s", broker.exchangeName, queueName)
-	<-forever
 }
 
 func failOnError(err error, msg string) {
