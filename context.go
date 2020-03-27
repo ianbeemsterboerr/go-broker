@@ -27,7 +27,7 @@ func NewBrokerContext(conn *amqp.Connection, exchangeName string) *BrokerContext
 }
 
 // AddMessageListener accepts a queueName, and starts listening on that queue. When a message is received, the onMessageReceive function is called.
-func (broker *BrokerContext) AddMessageListener(queueName string, onMessageReceive func(body []byte)) {
+func (broker *BrokerContext) AddMessageListener(queueName string, onMessageReceive func(body []byte, consumerName string)) {
 	ch, err := broker.conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
@@ -39,13 +39,13 @@ func (broker *BrokerContext) AddMessageListener(queueName string, onMessageRecei
 	failOnError(err, "Failed to declare a queue")
 
 	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		true,   // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
+		q.Name,       // queue
+		consumerName, // consumer
+		true,         // auto-ack
+		false,        // exclusive
+		false,        // no-local
+		false,        // no-wait
+		nil,          // args
 	)
 
 	go func() {
@@ -64,7 +64,7 @@ func failOnError(err error, msg string) {
 func declareExchange(exchangeName string, ch *amqp.Channel) error {
 	err := ch.ExchangeDeclare(
 		exchangeName, // name
-		"direct",     // type
+		"topic",      // type
 		true,         // durable
 		false,        // auto-deleted
 		false,        // internal
