@@ -16,6 +16,7 @@ type rabbitConnectionBuilder struct {
 	allowedRetries int
 }
 
+//NewConnectionBuilder Creates a new ConnectionBuilder
 func NewConnectionBuilder() *rabbitConnectionBuilder {
 	return &rabbitConnectionBuilder{allowedRetries: 10}
 }
